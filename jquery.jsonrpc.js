@@ -77,12 +77,14 @@
   var rpcid = 1,
       emptyFn = function() {};
 
-  $.jsonrpc = $.jsonrpc || function(data, callbacks, debug) {
-    debug = debug || false;
+  $.jsonrpc = $.jsonrpc || function(data, callbacks, async) {
+    async = async !== false;
 
+    var namespace = $.jsonrpc.namespace? $.jsonrpc.namespace+'.':'';
+    var method = data.method? (namespace+data.method) : '';
     var postdata = {
       jsonrpc: '2.0',
-      method: data.method || '',
+      method: method,
       params: data.params || {}
     };
     if (callbacks) {
@@ -112,6 +114,7 @@
         }
       },
       type: 'POST',
+      async: async,
       processData: false,
       data: JSON.stringify(postdata),
       success: function(resp) {
